@@ -26,6 +26,8 @@ function start() {
 function addEventListeners() {
     document.getElementById('form')
         .addEventListener('submit', generateButtonHandler)
+    document.getElementById('nextPassButton')
+        .addEventListener('click', nextPassButtonHandler)
 }
 
 function generateButtonHandler(e) {
@@ -39,6 +41,10 @@ function generateButtonHandler(e) {
     setTimeout(function() {
         draw()
     }, 0)
+}
+
+function nextPassButtonHandler(e) {
+    nextPass()
 }
 
 function getSettings() {

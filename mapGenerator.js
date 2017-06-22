@@ -8,6 +8,10 @@ function generateMap() {
 	}	
 }
 
+function nextPass() {
+	applyRule()
+	draw()
+}
 
 function fillSides() {
 	for (var row = 0; row < settings.height; row++) {
