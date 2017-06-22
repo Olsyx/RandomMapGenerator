@@ -4,14 +4,16 @@ function generateMap() {
 	fillSides()
 	
     for (var i = 0; i < settings.passes; i++) {
-		applyRule()		
+		applyPass()		
 	}	
 }
 
 function nextPass() {
-	applyRule()
+	applyPass()
 	draw()
 }
+
+// --- Map --- //
 
 function fillSides() {
 	for (var row = 0; row < settings.height; row++) {
@@ -35,31 +37,17 @@ function fillMap() {
     }
 }
 
-function smoothMap() {
-		
-	for (var row = 0; row < settings.height; row++) {
-		for (var col = 0; col < settings.width; col++) {
-			
-			var neighbourWalls = getSurroundingWallCount(row, col)
 
-			if (neighbourWalls > 4) {
-				map[row][col] = true
-			} else if (neighbourWalls < 4) {
-				map[row][col] = false
-			}
-
-		}
-	}
-	
-}
+// --- Neighbours --- //
 
 function getNeighborhood(targetMap, row, col) {
 	switch(settings.neighborhood) {
 		case "moore":
-		return getMooreNeighborhood(targetMap, row, col)
+			return getMooreNeighborhood(targetMap, row, col)
 			break;
 			
 		case "vnm":
+			return getVonNeumannManhattanNeighborhood(targetMap, row, col)
 			break;		
 		
 	}
@@ -79,7 +67,7 @@ function getMooreNeighborhood(targetMap, row, col) {
 	for (var r = startRow; r <= endRow; r++) {
 		for (var c = startCol; c <= endCol; c++) {
 			if (!(r == row && c == col)) {
-				wallCount += targetMap[r][c]
+				wallCount += targetMap[r][c]? 1 : 0
 			}
 		}
 	}
@@ -87,37 +75,69 @@ function getMooreNeighborhood(targetMap, row, col) {
 	return wallCount
 }
 
-function applyRule(row, col) {	
-	switch (settings.generator) {
+function getVonNeumannManhattanNeighborhood(targetMap, row, col) {
+	var wallCount = 0
+	
+	for (var i = 1; i <= settings.range; i++) {
+		wallCount += getDiagonalLineCount(targetMap, row-i, col, row, col + i, 1, 1)
+		wallCount += getDiagonalLineCount(targetMap, row, col + i, row + i, col, 1, -1)
+		wallCount += getDiagonalLineCount(targetMap, row + i, col, row, col - i, -1, -1)
+		wallCount += getDiagonalLineCount(targetMap, row, col - i, row - i, col, 1, -1)
+	}	
+	
+	return wallCount
+}
+
+function getDiagonalLineCount(targetMap, initRow, initCol, endRow, endCol, rowStep, colStep) {
+	var wallCount = 0
+	for (var r = initRow; r <= endRow; r = r + rowStep) {
+		for (var c = initCol; c <= endCol; c = c + colStep) {
+			if (InMap(r, c)) {
+				wallCount += targetMap[r][c] ? 1 : 0
+			}
+		}
+	}
+	
+	return wallCount
+}
+
+function InMap(row, col) {	
+	if (row < 0 || col < 0) {
+		return false;
+	}
+	
+	if (row >= settings.height || col >= settings.width) {
+		return false;
+	}
+	
+	return true;
+}
+
+
+// --- Generations --- //
+
+function applyPass(row, col) {	
+	switch (settings.passType) {
 		case "simple":
-			simpleRule()
+			simplePass()
 			break;
 		case "async":
-			asyncRule()
+			asyncPass()
 			break;
 		default:
 			break;		
 	}
 }
 
-
-function simpleRule() {	
+function simplePass() {	
 	for (var row = 0; row < settings.height; row++) {
 		for (var col = 0; col < settings.width; col++) {
-			
-			var neighbourWalls = getNeighborhood(map, row, col)
-
-			if (neighbourWalls > 4) {
-				map[row][col] = true
-			} else if (neighbourWalls < 4) {
-				map[row][col] = false
-			}
-
+			map[row][col] = applyRule(map, row, col)
 		}
 	}
 }
 
-function asyncRule() {
+function asyncPass() {
 	var updateMap = [[]]
 	
 	for (var row = 0; row < settings.height; row++) {
@@ -130,18 +150,35 @@ function asyncRule() {
 	
 	for (var row = 0; row < settings.height; row++) {
 		for (var col = 0; col < settings.width; col++) {
-			
-			var neighbourWalls = getSurroundingWallCount(map, row, col)
-
-			if (neighbourWalls > 4) {
-				updateMap[row][col] = true
-			} else if (neighbourWalls < 4) {
-				updateMap[row][col] = false
-			}
-
+			targetMap[row][col] = applyRule(map, row, col)
 		}
 	}	
 	
 	
 	map = updateMap
+}
+
+// -- Rules -- //
+
+function applyRule(lookupMap, row, col) {	
+	switch (settings.rule) {
+		case "four":
+			return fourRule(lookupMap, row, col)
+			break;
+		default:
+			return lookupMap[row][col]
+			break;		
+	}
+}
+
+function fourRule(lookupMap, row, col) {	
+	var neighbourWalls = getNeighborhood(lookupMap, row, col)
+	
+	if (neighbourWalls > 4) {
+		return true
+	} else if (neighbourWalls < 4) {
+		return false
+	}	
+	
+	return lookupMap[row][col]
 }

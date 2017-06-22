@@ -10,6 +10,12 @@ html, body {
     background-color: #f3f3f3;
 }
 
+h1, h2, h3, h4 {
+	padding: 0;
+	margin: 0;
+	
+}
+
 #canvas {
     position: absolute;
     top: 0;
@@ -18,17 +24,28 @@ html, body {
     left: 0;
 }
 
-#options {
+#settings {
     position: absolute;
     top: 15px;
     left: 15px;
     z-index: 2;
+	
+}
+
+#panel {
     background-color: #f3f3f3;
-    padding: 10px;
     border: 3px solid #6d6d6d;
+	margin: 10px;
+	padding: 10px;
 }
 
 #ruleNumber,
 #squareSize {
     width: 60px;
+}
+
+
+#generateButton {
+	
+	width: 100%;
 }

@@ -6,9 +6,10 @@ var settings = {
     squareSize: 5,
 	fillProportion: 50,
 	passes: 5,
+	passType: "",
+	rule: "",
 	neighborhood: "",
 	range: 1,
-	generator: "",
 }
 
 var map = [[]]
@@ -56,11 +57,16 @@ function getSettings() {
 	settings.fillProportion = parseFloat(document.getElementById('fillProportion').value)
 	settings.passes = parseInt(document.getElementById('passes').value)
 
+	settings.passType = document.getElementById('pass_type').value
+	
+	settings.rule = document.getElementById('rule').value
+	
 	settings.neighborhood = document.getElementById('neighborhood').value
+	
 	settings.range = parseInt(document.getElementById('range').value)
-	settings.range = Math.min(settings.range, width)
-	settings.range = Math.min(settings.range, height)
-	settings.generator = document.getElementById('generator').value
+	settings.range = Math.min(settings.range, settings.width)
+	settings.range = Math.min(settings.range, settings.height)
+	
 }
 
 

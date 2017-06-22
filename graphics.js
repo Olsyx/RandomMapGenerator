@@ -23,8 +23,8 @@ function getCanvasContext() {
 
 // --- Drawing --- //
 
-function drawSquare(ctx, x, y) {
-    ctx.fillStyle = settings.squareColor
+function drawSquare(ctx, x, y, color) {
+    ctx.fillStyle = color
     ctx.fillRect(
         x,
         y,
@@ -45,8 +45,9 @@ function draw() {
 			var x = startX + col * settings.squareSize
 			
 			if (map[row][col]) {
-				drawSquare(ctx, x, y)
+				drawSquare(ctx, x, y, settings.squareColor)
 			}
 		}		
 	}
+	
 }
