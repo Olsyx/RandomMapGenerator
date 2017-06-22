@@ -53,7 +53,21 @@ function smoothMap() {
 	
 }
 
-function getSurroundingWallCount(targetMap, row, col) {
+function getNeighborhood(targetMap, row, col) {
+	switch(settings.neighborhood) {
+		case "moore":
+		return getMooreNeighborhood(targetMap, row, col)
+			break;
+			
+		case "vnm":
+			break;		
+		
+	}
+	
+	
+}
+
+function getMooreNeighborhood(targetMap, row, col) {
 	var wallCount = 0
 
 	var startRow = row > 0 ? row - 1 : row
@@ -73,8 +87,6 @@ function getSurroundingWallCount(targetMap, row, col) {
 	return wallCount
 }
 
-
-
 function applyRule(row, col) {	
 	switch (settings.generator) {
 		case "simple":
@@ -93,7 +105,7 @@ function simpleRule() {
 	for (var row = 0; row < settings.height; row++) {
 		for (var col = 0; col < settings.width; col++) {
 			
-			var neighbourWalls = getSurroundingWallCount(map, row, col)
+			var neighbourWalls = getNeighborhood(map, row, col)
 
 			if (neighbourWalls > 4) {
 				map[row][col] = true
