@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>Olsyx Map Generation</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+        <div id="options">
+            <form id="form">
+                <label>Width: </label><input type="number" id="width" value="30" min="2"><br>
+                <label>Height: </label><input type="number" id="height" value="30" min="2"><br>
+                <label>Square Size: </label><input type="number" id="squareSize" value="5" min="1"><br>
+                <button id="generateButton">Generate</button>
+            </form>
+            
+			<label>References & Cool Links</label><br/>
+            <a href="https://sirikon.github.io/udca/" target="_blank">Sirikon's Unidimensional cellular automata</a>
+        </div>
+
+        <canvas id="canvas"></canvas>
+
+        <script src="index.js"></script>
+    </body>
+</html>
