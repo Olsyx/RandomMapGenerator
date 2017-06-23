@@ -57,17 +57,11 @@ function getNeighborhood(targetMap, row, col) {
 
 function getMooreNeighborhood(targetMap, row, col) {
 	var wallCount = 0
-
-	var startRow = row > 0 ? row - 1 : row
-	var endRow = row < settings.height - 1 ? row + 1 : row
-
-	var startCol = col > 0 ? col - 1 : col
-	var endCol = col < settings.width - 1 ? col + 1 : col
-
-	for (var r = startRow; r <= endRow; r++) {
-		for (var c = startCol; c <= endCol; c++) {
-			if (!(r == row && c == col)) {
-				wallCount += targetMap[r][c]? 1 : 0
+	
+	for (var r = row - settings.range; r <= row + settings.range; r++) {
+		for (var c = col - settings.range; c <= col + settings.range; c++) {
+			if (InMap(r, c) && !(r == row && c == col)) {
+				wallCount += targetMap[r][c] ? 1 : 0
 			}
 		}
 	}
@@ -150,7 +144,7 @@ function asyncPass() {
 	
 	for (var row = 0; row < settings.height; row++) {
 		for (var col = 0; col < settings.width; col++) {
-			targetMap[row][col] = applyRule(map, row, col)
+			updateMap[row][col] = applyRule(map, row, col)
 		}
 	}	
 	
@@ -162,8 +156,11 @@ function asyncPass() {
 
 function applyRule(lookupMap, row, col) {	
 	switch (settings.rule) {
-		case "four":
-			return fourRule(lookupMap, row, col)
+		case "fixed":
+			return fixedRule(lookupMap, row, col)
+			break;
+		case "random":
+			return randomRule(lookupMap, row, col)
 			break;
 		default:
 			return lookupMap[row][col]
@@ -171,14 +168,27 @@ function applyRule(lookupMap, row, col) {
 	}
 }
 
-function fourRule(lookupMap, row, col) {	
+function fixedRule(lookupMap, row, col) {	
 	var neighbourWalls = getNeighborhood(lookupMap, row, col)
 	
-	if (neighbourWalls > 4) {
+	var threshold = parseInt(settings.ruleValue)
+	
+	if (neighbourWalls > threshold) {
 		return true
-	} else if (neighbourWalls < 4) {
+	} else if (neighbourWalls < threshold) {
 		return false
 	}	
 	
 	return lookupMap[row][col]
+}
+
+function randomRule(lookupMap, row, col) {	
+	var neighbourWalls = getNeighborhood(lookupMap, row, col)
+	
+	var threshold = Math.min(settings.ruleValue, 100)
+	threshold = neighbourWalls/10 * settings.ruleValue 
+	
+	var choice = Math.round((Math.random() * 100)) + 1 
+	
+	return choice >= threshold
 }

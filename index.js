@@ -8,6 +8,7 @@ var settings = {
 	passes: 5,
 	passType: "",
 	rule: "",
+	ruleValue: 1,
 	neighborhood: "",
 	range: 1,
 }
@@ -60,6 +61,7 @@ function getSettings() {
 	settings.passType = document.getElementById('pass_type').value
 	
 	settings.rule = document.getElementById('rule').value
+	settings.ruleValue = parseFloat(document.getElementById('ruleValue').value)
 	
 	settings.neighborhood = document.getElementById('neighborhood').value
 	
