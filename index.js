@@ -1,22 +1,26 @@
 'use strict'
 
 var settings = {
-	width: 2,
-	height: 2,
+	width: 30,
+	height: 30,
     squareSize: 5,
 	fillProportion: 50,
 	passes: 5,
-	passType: "",
-	rule: "",
+	passType: "simple",
+	rule: "fixed",
 	ruleValue: 1,
-	neighborhood: "",
+	neighborhood: "moore",
 	range: 1,
 }
+
+var defaultSettingsJSON = JSON.stringify(settings)
 
 var map = [[]]
 
 
 function start() {
+	readSettingsFromHashStorage()
+	setSettings()
     addEventListeners()
     resizeCanvas()
 	getSettings() 
@@ -52,8 +56,8 @@ function nextPassButtonHandler(e) {
 }
 
 function getSettings() {
-	settings.width = document.getElementById('width').value
-	settings.height = document.getElementById('height').value
+	settings.width = parseInt(document.getElementById('width').value)
+	settings.height = parseInt(document.getElementById('height').value)
     settings.squareSize = parseInt(document.getElementById('squareSize').value)
 	settings.fillProportion = parseFloat(document.getElementById('fillProportion').value)
 	settings.passes = parseInt(document.getElementById('passes').value)
@@ -68,8 +72,36 @@ function getSettings() {
 	settings.range = parseInt(document.getElementById('range').value)
 	settings.range = Math.min(settings.range, settings.width)
 	settings.range = Math.min(settings.range, settings.height)
-	
+
+	if (defaultSettingsJSON !== JSON.stringify(settings)) {
+		hashStorage.set(settings)
+	} else {
+		hashStorage.set(null)
+	}
 }
 
+function readSettingsFromHashStorage() {
+	var settingsFromStorage = hashStorage.get()
+	if (settingsFromStorage) {
+		settings = settingsFromStorage
+	}
+}
+
+function setSettings() {
+	document.getElementById('width').value = settings.width
+	document.getElementById('height').value = settings.height
+	document.getElementById('squareSize').value = settings.squareSize
+	document.getElementById('fillProportion').value = settings.fillProportion
+	document.getElementById('passes').value = settings.passes
+
+	document.getElementById('pass_type').value = settings.passType
+	
+	document.getElementById('rule').value = settings.rule
+	document.getElementById('ruleValue').value = settings.ruleValue
+
+	document.getElementById('neighborhood').value = settings.neighborhood
+	
+	document.getElementById('range').value = settings.range
+}
 
 start()
