@@ -15,15 +15,13 @@ function applyRule(lookupMap, settings, row, col) {
 
 function fixedRule(lookupMap, settings, row, col) {	
 	var neighbourWalls = getNeighborhood(lookupMap, settings, row, col)
-	
 	var threshold = parseInt(settings.ruleValue)
 	
 	if (neighbourWalls > threshold) {
 		return true
 	} else if (neighbourWalls < threshold) {
 		return false
-	}	
-	
+	}
 	return lookupMap[row][col]
 }
 

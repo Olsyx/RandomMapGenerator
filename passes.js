@@ -1,5 +1,5 @@
 
-function applyPass(targetMap, settings) {	
+function applyPass(targetMap, settings) {
 	switch (settings.passType) {
 		case "simple":
 			return simplePass(targetMap, settings)
@@ -15,7 +15,7 @@ function applyPass(targetMap, settings) {
 function simplePass(targetMap, settings) {	
 	for (var row = 0; row < _mapHeight; row++) {
 		for (var col = 0; col < _mapWidth; col++) {
-			targetMap[row][col] = applyRule(targetMap, row, col)
+			targetMap[row][col] = applyRule(targetMap, settings, row, col)
 		}
 	}
 	

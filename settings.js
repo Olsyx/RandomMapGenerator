@@ -1,8 +1,13 @@
 
-var _mapWidth = 2
-var _mapHeight = 2
+var _mapWidth = 100
+var _mapHeight = 100
 var _squareSize = 5
-var _squareColor =  '#6d6d6d'
+var _generateForest = true
+
+
+var _seaColor =  '#6B93B4'
+var _groundColor =  '#8F624C'
+var _forestColor =  '#406F4C'
 
 function emptySettings() {	
 	var settings = {
@@ -13,7 +18,6 @@ function emptySettings() {
 		ruleValue: 1,
 		neighborhood: "",
 		range: 1,
-		river: false,
 	}
 	
 	return settings
@@ -22,7 +26,12 @@ function emptySettings() {
 function updateGlobalSettings() {	
 	_mapWidth = document.getElementById('width').value
 	_mapHeight = document.getElementById('height').value
-    _squareSize = parseInt(document.getElementById('squareSize').value)
+	_squareSize = document.getElementById('squareSize').value
+	_generateForest =  document.getElementById('forest').checked
+	
+    _seaColor = "#" + document.getElementById('seaColor').value
+    _groundColor = "#" + document.getElementById('groundColor').value
+    _forestColor = "#" + document.getElementById('forestColor').value
 }
 
 
@@ -40,10 +49,8 @@ function getDocumentSettings() {
 	settings.neighborhood = document.getElementById('neighborhood').value
 	
 	settings.range = parseInt(document.getElementById('range').value)
-	settings.range = Math.min(settings.range, settings.width)
-	settings.range = Math.min(settings.range, settings.height)
-	
-	settings.river =  document.getElementById('river').checked
+	settings.range = Math.min(settings.range, _mapWidth)
+	settings.range = Math.min(settings.range, _mapHeight)
 	
 	return settings
 }

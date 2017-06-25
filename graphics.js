@@ -27,14 +27,22 @@ function drawSquare(ctx, x, y, color) {
     ctx.fillRect(
         x,
         y,
-        settings.squareSize,
-        settings.squareSize)
+        _squareSize,
+        _squareSize)
 }
 
-function draw(targetMap, squareColor) {
+function draw(targetMap, squareColor, noSquareColor) {
     clearCanvas()
     var ctx = getCanvasContext()
-	
+	drawMap(ctx, targetMap, squareColor, noSquareColor)
+}
+
+function addDraw(targetMap, squareColor, noSquareColor) {
+    var ctx = getCanvasContext()
+	drawMap(ctx, targetMap, squareColor, noSquareColor)
+}
+
+function drawMap(ctx, targetMap, squareColor, noSquareColor) {
 	var startX = (canvas.width - _mapWidth * _squareSize)/2
 	var startY = (canvas.height - _mapHeight * _squareSize)/2
 			
@@ -46,8 +54,9 @@ function draw(targetMap, squareColor) {
 			
 			if (targetMap[row][col]) {
 				drawSquare(ctx, x, y, squareColor)
+			} else if (noSquareColor != null) {
+				drawSquare(ctx, x, y, noSquareColor)
 			}
 		}		
 	}
-	
 }

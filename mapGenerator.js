@@ -1,30 +1,74 @@
 
 var baseMap = [[]]
-var baseMapSettings = { }
+var baseSettings = { }
 
-var forest = [[]]
+var forestMap = [[]]
+var forestSettings = { }
 
 function generateMap() {
-	baseMapSettings = getDocumentSettings(baseMapSettings)
-	
-	baseMap = fillMapWithRandomness(baseMapSettings)
-	
-	baseMap = fillSides(baseMap)
-	
-    for (var i = 0; i < settings.passes; i++) {
-		applyPass(baseMap, baseMapSettings)		
-	}	
-	
-	draw(baseMap, _squareColor)
+	generateBase()
+	generateForest() 
+	drawMaps()
 }
 
 function nextPass() {
-	applyPass(baseMap, baseMapSettings)
-	draw(baseMap, _squareColor)
+	applyPass(baseMap, baseSettings)
+	
+	if (_generateForest) {
+		applyPass(forestMap, forestSettings)
+	}
+	
+	drawMaps()
+}
+
+function drawMaps() {	
+	draw(baseMap, _groundColor, _seaColor)
+	
+	if (_generateForest) {
+		addDraw(forestMap, _forestColor)
+	}
 }
 
 
-// --- Map --- //
+
+function generateBase() {
+	baseSettings = getDocumentSettings()
+	baseMap = newLayer(baseSettings)
+	
+}
+
+function generateForest() {
+	forestSettings = emptySettings()
+	
+	forestSettings.passType = "async"
+	forestSettings.passes = 5
+	forestSettings.rule = "random"
+	forestSettings.ruleValue = 50
+	forestSettings.neighborhood = "moore"
+	forestSettings.range = 2
+	
+	
+	forestMap = newLayer(forestSettings)
+	
+	forestMap = isolateMap(forestMap, baseMap)	
+}
+
+
+// --- Generating --- //
+
+function newLayer(settings) {	
+	map = fillMapWithRandomness(settings)
+	
+	map = fillSides(map)
+	
+    for (var i = 0; i < settings.passes; i++) {
+		applyPass(map, settings)		
+	}	
+	
+	return map
+}
+
+// --- Filling --- //
 
 function fillMapWithRandomness(settings) {
     var randomMap = [[]]
@@ -54,17 +98,18 @@ function fillSides(targetMap) {
 
 // --- Utils --- //
 
-function printMap() {
-	var s = "Size: " + _mapWidth + "x" + _mapHeight
+function isolateMap(targetMap, maskMap) {	
+	var result = [[]]
 	
 	for (var row = 0; row < _mapHeight; row++) {
-		s += "\n"
+		result[row] = []
 		for (var col = 0; col < _mapWidth; col++) {
-			s += baseMap[row][col] + " " 
+			var value = maskMap[row][col] ? targetMap[row][col] : false
+			result[row][col] = value
 		}
 	}
-	
-	alert(s)
+		
+	return result
 }
 
 function copyMap(targetMap) {	
@@ -90,4 +135,17 @@ function IsInMap(row, col) {
 	}
 	
 	return true;
+}
+
+function printMap() {
+	var s = "Size: " + _mapWidth + "x" + _mapHeight
+	
+	for (var row = 0; row < _mapHeight; row++) {
+		s += "\n"
+		for (var col = 0; col < _mapWidth; col++) {
+			s += baseMap[row][col] + " " 
+		}
+	}
+	
+	alert(s)
 }
