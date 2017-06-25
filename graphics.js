@@ -1,5 +1,4 @@
 
-var squareColor =  '#6d6d6d'
 
 
 function getCanvas() {
@@ -32,20 +31,21 @@ function drawSquare(ctx, x, y, color) {
         settings.squareSize)
 }
 
-function draw() {
+function draw(targetMap, squareColor) {
     clearCanvas()
     var ctx = getCanvasContext()
 	
-	var startX = (canvas.width - settings.width*settings.squareSize)/2
-	var startY = (canvas.height - settings.height*settings.squareSize)/2
+	var startX = (canvas.width - _mapWidth * _squareSize)/2
+	var startY = (canvas.height - _mapHeight * _squareSize)/2
 			
-	for (var row = 0; row < settings.height; row++) {
-		var y = startY + row * settings.squareSize
-		for (var col = 0; col < settings.width; col++) {
-			var x = startX + col * settings.squareSize
+	for (var row = 0; row < _mapHeight; row++) {
+		var y = startY + row * _squareSize
+		
+		for (var col = 0; col < _mapWidth; col++) {
+			var x = startX + col * _squareSize
 			
-			if (map[row][col]) {
-				drawSquare(ctx, x, y, settings.squareColor)
+			if (targetMap[row][col]) {
+				drawSquare(ctx, x, y, squareColor)
 			}
 		}		
 	}
