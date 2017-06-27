@@ -18,9 +18,9 @@ function fixedRule(lookupMap, settings, row, col) {
 	var threshold = parseInt(settings.ruleValue)
 	
 	if (neighbourWalls > threshold) {
-		return true
+		return 1
 	} else if (neighbourWalls < threshold) {
-		return false
+		return 0
 	}
 	return lookupMap[row][col]
 }
@@ -33,5 +33,5 @@ function randomRule(lookupMap, settings, row, col) {
 	
 	var choice = Math.round((Math.random() * 100)) + 1 
 	
-	return choice >= threshold
+	return choice >= threshold ? 1 : 0
 }

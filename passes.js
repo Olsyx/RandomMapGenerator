@@ -13,23 +13,25 @@ function applyPass(targetMap, settings) {
 }
 
 function simplePass(targetMap, settings) {	
+	var resultMap = copyMap(targetMap)	
+	
 	for (var row = 0; row < _mapHeight; row++) {
 		for (var col = 0; col < _mapWidth; col++) {
-			targetMap[row][col] = applyRule(targetMap, settings, row, col)
+			resultMap[row][col] = applyRule(resultMap, settings, row, col)
 		}
 	}
 	
-	return targetMap
+	return resultMap
 }
 
 function asyncPass(targetMap, settings) {
-	var updateMap = copyMap(targetMap)	
+	var resultMap = copyMap(targetMap)	
 	
 	for (var row = 0; row < _mapHeight; row++) {
 		for (var col = 0; col < _mapWidth; col++) {
-			updateMap[row][col] = applyRule(targetMap, settings, row, col)
+			resultMap[row][col] = applyRule(targetMap, settings, row, col)
 		}
 	}	
 		
-	return updateMap
+	return resultMap
 }

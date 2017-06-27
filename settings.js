@@ -2,12 +2,14 @@
 var _mapWidth = 100
 var _mapHeight = 100
 var _squareSize = 5
+var _generateHeight = true
 var _generateForest = true
 
 
 var _seaColor =  '#6B93B4'
-var _groundColor =  '#8F624C'
+var _groundColor =  '#4C7840'
 var _forestColor =  '#406F4C'
+var _mountainColor =  '#8F624C'
 
 function emptySettings() {	
 	var settings = {
@@ -27,10 +29,12 @@ function updateGlobalSettings() {
 	_mapWidth = document.getElementById('width').value
 	_mapHeight = document.getElementById('height').value
 	_squareSize = document.getElementById('squareSize').value
+	_generateHeight =  document.getElementById('heightMap').checked
 	_generateForest =  document.getElementById('forest').checked
 	
     _seaColor = "#" + document.getElementById('seaColor').value
     _groundColor = "#" + document.getElementById('groundColor').value
+    _mountainColor = "#" + document.getElementById('mountainColor').value
     _forestColor = "#" + document.getElementById('forestColor').value
 }
 

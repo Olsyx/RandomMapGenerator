@@ -2,20 +2,31 @@
 var baseMap = [[]]
 var baseSettings = { }
 
+var heightMap = [[]]
+var heightSettings = [[]]
+
 var forestMap = [[]]
 var forestSettings = { }
 
 function generateMap() {
 	generateBase()
+	generateHeight()
 	generateForest() 
+	
 	drawMaps()
 }
 
 function nextPass() {
-	applyPass(baseMap, baseSettings)
+	baseMap = applyPass(baseMap, baseSettings)
+		
+	if (_generateHeight) {
+		heightMap = applyPass(heightMap, heightSettings)
+	}
 	
 	if (_generateForest) {
-		applyPass(forestMap, forestSettings)
+		forestMap = applyPass(forestMap, forestSettings)
+		forestMap = isolateMap(forestMap, baseMap)
+		forestMap = substractMap(forestMap, heightMap)
 	}
 	
 	drawMaps()
@@ -24,20 +35,52 @@ function nextPass() {
 function drawMaps() {	
 	draw(baseMap, _groundColor, _seaColor)
 	
+	if (_generateHeight) {
+		addDraw(heightMap, _mountainColor)
+	}
+	
 	if (_generateForest) {
 		addDraw(forestMap, _forestColor)
 	}
 }
 
-
-
 function generateBase() {
 	baseSettings = getDocumentSettings()
 	baseMap = newLayer(baseSettings)
+}
+
+function generateHeight() {
+	if (!_generateHeight) {
+		return
+	}
+		
+	heightSettings = emptySettings()
 	
+	heightSettings.passType = "async"
+	heightSettings.passes = 5
+	heightSettings.rule = "fixed"
+	heightSettings.ruleValue = 12
+	heightSettings.neighborhood = "moore"
+	heightSettings.range = 2
+	
+	
+	heightMap = newLayer(heightSettings)
+	
+	for (var i = 0; i < 4; i++) {
+		heightSettings.ruleValue++
+		
+		var nextStep = applyPass(heightMap, heightSettings)		
+		heightMap = addMap(heightMap, nextStep, true)
+	}
+	
+	heightMap = isolateMap(heightMap, baseMap)	
 }
 
 function generateForest() {
+	if (!_generateForest) {
+		return
+	}
+	
 	forestSettings = emptySettings()
 	
 	forestSettings.passType = "async"
@@ -51,6 +94,7 @@ function generateForest() {
 	forestMap = newLayer(forestSettings)
 	
 	forestMap = isolateMap(forestMap, baseMap)	
+	forestMap = substractMap(forestMap, heightMap)
 }
 
 
@@ -62,7 +106,7 @@ function newLayer(settings) {
 	map = fillSides(map)
 	
     for (var i = 0; i < settings.passes; i++) {
-		applyPass(map, settings)		
+		map = applyPass(map, settings)		
 	}	
 	
 	return map
@@ -75,7 +119,7 @@ function fillMapWithRandomness(settings) {
 	for (var row = 0; row < _mapHeight; row++) {
 		randomMap[row] = []
 		for (var col = 0; col < _mapWidth; col++) {	
-			var value = Math.round((Math.random() * 100)) + 1 >= settings.fillProportion ? true : false
+			var value = (Math.round((Math.random() * 100)) + 1 >= settings.fillProportion) ? 1 : 0
 			randomMap[row].push(value)
 		}
     }
@@ -84,19 +128,60 @@ function fillMapWithRandomness(settings) {
 
 function fillSides(targetMap) {
 	for (var row = 0; row < _mapHeight; row++) {
-		targetMap[row][0] = true
-		targetMap[row][_mapHeight-1] = true
+		targetMap[row][0] = 1
+		targetMap[row][_mapHeight-1] = 1
     }
 	for (var col = 0; col < _mapWidth; col++) {	
-		targetMap[0][col] = true
-		targetMap[_mapWidth-1][col] = true
+		targetMap[0][col] = 1
+		targetMap[_mapWidth-1][col] = 1
 	}
 	
 	return targetMap
 }
 
 
+
 // --- Utils --- //
+
+function addMap(baseLayer, addLayer, excludeZeros) {	
+	if (baseLayer == undefined || baseLayer.length <= 0) {
+		return addLayer
+	}
+	
+	if (addLayer == undefined || addLayer.length <= 0) {
+		return baseLayer
+	}
+
+	var result = [[]]
+	
+	for (var row = 0; row < _mapHeight; row++) {
+		result[row] = []
+		for (var col = 0; col < _mapWidth; col++) {
+			var value = 0
+			if (!excludeZeros || (excludeZeros && baseLayer[row][col] != 0)) {
+				value = baseLayer[row][col] + addLayer[row][col]
+			}
+			
+			result[row][col] = value
+		}
+	}
+		
+	return result
+}
+
+function substractMap(targetMap, maskMap) {	
+	var result = [[]]
+	
+	for (var row = 0; row < _mapHeight; row++) {
+		result[row] = []
+		for (var col = 0; col < _mapWidth; col++) {
+			var value = maskMap[row][col] >= 1 ? 0 : targetMap[row][col]
+			result[row][col] = value
+		}
+	}
+		
+	return result
+}
 
 function isolateMap(targetMap, maskMap) {	
 	var result = [[]]
@@ -104,7 +189,7 @@ function isolateMap(targetMap, maskMap) {
 	for (var row = 0; row < _mapHeight; row++) {
 		result[row] = []
 		for (var col = 0; col < _mapWidth; col++) {
-			var value = maskMap[row][col] ? targetMap[row][col] : false
+			var value = maskMap[row][col] >= 1 ? targetMap[row][col] : 0
 			result[row][col] = value
 		}
 	}
@@ -137,13 +222,13 @@ function IsInMap(row, col) {
 	return true;
 }
 
-function printMap() {
+function printMap(targetMap) {
 	var s = "Size: " + _mapWidth + "x" + _mapHeight
 	
 	for (var row = 0; row < _mapHeight; row++) {
 		s += "\n"
 		for (var col = 0; col < _mapWidth; col++) {
-			s += baseMap[row][col] + " " 
+			s += targetMap[row][col] + " " 
 		}
 	}
 	
