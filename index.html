@@ -9,9 +9,9 @@
         <div id="settings">
 			<div id="panel">
 				<form id="form">
-					<label>Width: </label><input type="number" id="width" value="100" min="2"><br>
-					<label>Height: </label><input type="number" id="height" value="100" min="2"><br>
-					<label>Square Size: </label><input type="number" id="squareSize" value="5" min="1"><br>
+					<label>Width: </label><input type="number" id="width" value="300" min="2"><br>
+					<label>Height: </label><input type="number" id="height" value="300" min="2"><br>
+					<label>Square Size: </label><input type="number" id="squareSize" value="3" min="1"><br>
 					<label>Fill Proportion: </label><input type="number" id="fillProportion" value="50" min="1" max="100" step="0.01"><br>
 					<hr>               
 					<label>Initial Passes: </label><input type="number" id="passes" value="5" min="0"><br>
@@ -26,6 +26,8 @@
 					<select type="text" id="rule">
 						<option value="fixed" selected>Fixed Threshold</option>
 						<option value="random">Random Choice</option>
+						<option value="latitude">Latitude Choice</option>
+						<option value="randomLatitude">Random Latitude</option>
 					</select>
 					<label>Value: </label><input type="number" id="ruleValue" value="4" min="1" step="0.01"><br>	
 					<hr>
@@ -69,6 +71,7 @@
 			</div>
 		</div>
         <canvas id="canvas"></canvas>
+        <script src="maths.js"></script>
         <script src="graphics.js"></script>
         <script src="settings.js"></script>
         <script src="rules.js"></script>

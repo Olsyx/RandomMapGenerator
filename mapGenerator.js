@@ -17,16 +17,17 @@ function generateMap() {
 }
 
 function nextPass() {
+	baseSettings.currentPass++
 	baseMap = applyPass(baseMap, baseSettings)
 		
 	if (_generateHeight) {
-		heightMap = applyPass(heightMap, heightSettings)
+		heightSettings.currentPass++
+		generateHeight()
 	}
 	
 	if (_generateForest) {
-		forestMap = applyPass(forestMap, forestSettings)
-		forestMap = isolateMap(forestMap, baseMap)
-		forestMap = substractMap(forestMap, heightMap)
+		forestSettings.currentPass++
+		generateForest()
 	}
 	
 	drawMaps()
@@ -57,17 +58,18 @@ function generateHeight() {
 	heightSettings = emptySettings()
 	
 	heightSettings.passType = "async"
-	heightSettings.passes = 5
+	heightSettings.totalPasses = 1
 	heightSettings.rule = "fixed"
 	heightSettings.ruleValue = 12
 	heightSettings.neighborhood = "moore"
 	heightSettings.range = 2
-	
-	
+		
 	heightMap = newLayer(heightSettings)
 	
-	for (var i = 0; i < 4; i++) {
+	heightSettings.totalPasses = 4
+	for (var i = 0; i < heightSettings.totalPasses; i++) {
 		heightSettings.ruleValue++
+		heightSettings.currentPass = i
 		
 		var nextStep = applyPass(heightMap, heightSettings)		
 		heightMap = addMap(heightMap, nextStep, true)
@@ -84,12 +86,11 @@ function generateForest() {
 	forestSettings = emptySettings()
 	
 	forestSettings.passType = "async"
-	forestSettings.passes = 5
+	forestSettings.totalPasses = 0
 	forestSettings.rule = "random"
 	forestSettings.ruleValue = 50
 	forestSettings.neighborhood = "moore"
-	forestSettings.range = 2
-	
+	forestSettings.range = 2	
 	
 	forestMap = newLayer(forestSettings)
 	
@@ -105,7 +106,8 @@ function newLayer(settings) {
 	
 	map = fillSides(map)
 	
-    for (var i = 0; i < settings.passes; i++) {
+    for (var i = 0; i < settings.totalPasses; i++) {
+		settings.currentPass = i
 		map = applyPass(map, settings)		
 	}	
 	
@@ -221,6 +223,7 @@ function IsInMap(row, col) {
 	
 	return true;
 }
+
 
 function printMap(targetMap) {
 	var s = "Size: " + _mapWidth + "x" + _mapHeight

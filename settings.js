@@ -7,14 +7,15 @@ var _generateForest = true
 
 
 var _seaColor =  '#6B93B4'
-var _groundColor =  '#4C7840'
+var _groundColor =  '#748647'
 var _forestColor =  '#406F4C'
 var _mountainColor =  '#8F624C'
 
 function emptySettings() {	
 	var settings = {
 		fillProportion: 50,
-		passes: 5,
+		totalPasses: 5,
+		currentPass: 0,
 		passType: "",
 		rule: "",
 		ruleValue: 1,
@@ -43,7 +44,7 @@ function getDocumentSettings() {
 	var settings = emptySettings()
 	
 	settings.fillProportion = parseFloat(document.getElementById('fillProportion').value)
-	settings.passes = parseInt(document.getElementById('passes').value)
+	settings.totalPasses = parseInt(document.getElementById('passes').value)
 
 	settings.passType = document.getElementById('pass_type').value
 	
